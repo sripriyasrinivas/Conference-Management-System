@@ -50,3 +50,9 @@ replay_pid*
 # Spring Boot / application local config (optional - uncomment if you keep local secrets out of VCS)
 # src/main/resources/application.properties
 # src/main/resources/application-local.properties
+
+# Database files
+/data/
+*.db
+*.mv.db
+*.trace.db
