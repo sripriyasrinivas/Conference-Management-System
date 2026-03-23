@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Speaker Dashboard | CMS</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+    <div class="page-header">
+        <h2><i class="fas fa-microphone"></i> Speaker Dashboard</h2>
+        <p class="text-muted">Welcome, <span th:text="${speaker.fullName}"></span></p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card stat-blue">
+            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${sessions.size()}">0</div>
+                <div class="stat-label">My Sessions</div>
+            </div>
+        </div>
+        <div class="stat-card stat-green">
+            <div class="stat-icon"><i class="fas fa-university"></i></div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${speaker.institution}">—</div>
+                <div class="stat-label">Institution</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <a th:href="@{/speaker/sessions}" class="action-card">
+            <i class="fas fa-list"></i><span>My Sessions</span>
+        </a>
+        <a th:href="@{/schedule}" class="action-card">
+            <i class="fas fa-calendar-alt"></i><span>Full Schedule</span>
+        </a>
+        <a th:href="@{/messages/inbox}" class="action-card">
+            <i class="fas fa-envelope"></i><span>Messages</span>
+        </a>
+        <a th:href="@{/speaker/profile}" class="action-card">
+            <i class="fas fa-user-edit"></i><span>My Profile</span>
+        </a>
+    </div>
+
+    <!-- My Sessions -->
+    <div class="section-title"><h3>Upcoming Sessions</h3></div>
+    <div th:if="${#lists.isEmpty(sessions)}" class="empty-state">
+        <i class="fas fa-calendar-times fa-3x text-muted"></i>
+        <p>No sessions assigned yet. Check back later.</p>
+    </div>
+    <div th:each="session : ${sessions}" class="card session-card">
+        <div class="session-card-header">
+            <div>
+                <h4 th:text="${session.title}"></h4>
+                <span th:class="'badge badge-session-' + ${session.type.name().toLowerCase()}"
+                      th:text="${session.type.displayName}"></span>
+                <span th:if="${session.track}" class="badge badge-track" th:text="${session.track}"></span>
+            </div>
+            <a th:href="@{/speaker/sessions/{id}(id=${session.id})}" class="btn btn-sm btn-primary">
+                <i class="fas fa-eye"></i> Details
+            </a>
+        </div>
+        <div class="session-meta">
+            <span><i class="fas fa-calendar"></i> <span th:text="${session.sessionDate}"></span></span>
+            <span><i class="fas fa-clock"></i>
+                <span th:text="${session.startTime} + ' – ' + ${session.endTime}"></span></span>
+            <span th:if="${session.room}"><i class="fas fa-door-open"></i>
+                <span th:text="${session.room}"></span></span>
+        </div>
+        <p class="text-muted" th:text="${#strings.abbreviate(session.description, 120)}"></p>
+    </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

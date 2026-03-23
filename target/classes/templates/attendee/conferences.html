@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Conferences | CMS</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+    <div class="page-header">
+        <h2><i class="fas fa-university"></i> Available Conferences</h2>
+    </div>
+    <div th:if="${#lists.isEmpty(conferences)}" class="empty-state">
+        <i class="fas fa-calendar-times fa-3x text-muted"></i>
+        <p>No conferences available at the moment.</p>
+    </div>
+    <div th:each="conf : ${conferences}" class="card conference-card">
+        <div class="conference-card-header">
+            <div>
+                <h3 th:text="${conf.name}"></h3>
+                <span th:class="'badge badge-conf-' + ${conf.status.name().toLowerCase()}"
+                      th:text="${conf.status}"></span>
+            </div>
+            <div th:with="isRegistered=${myRegistrations.stream().anyMatch(r -> r.conference.id == conf.id)}">
+                <span th:if="${isRegistered}" class="badge badge-green">
+                    <i class="fas fa-check"></i> Registered
+                </span>
+                <a th:if="${!isRegistered}"
+                   th:href="@{/attendee/conferences/{id}/register(id=${conf.id})}"
+                   class="btn btn-primary">
+                    <i class="fas fa-ticket-alt"></i> Register Now
+                </a>
+            </div>
+        </div>
+        <p class="text-muted" th:text="${#strings.abbreviate(conf.description, 200)}"></p>
+        <div class="conference-card-details">
+            <span><i class="fas fa-map-marker-alt"></i> <span th:text="${conf.venue}"></span></span>
+            <span><i class="fas fa-calendar"></i>
+                <span th:text="${conf.startDate} + ' → ' + ${conf.endDate}"></span></span>
+            <span th:if="${conf.submissionDeadline}">
+                <i class="fas fa-clock"></i> Submission: <span th:text="${conf.submissionDeadline}"></span>
+            </span>
+            <span><i class="fas fa-users"></i>
+                <span th:text="${conf.registrations.size()} + '/' + ${conf.maxAttendees} + ' registered'"></span>
+            </span>
+        </div>
+    </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

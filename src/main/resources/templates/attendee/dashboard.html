@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Attendee Dashboard | CMS</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+    <div class="page-header">
+        <h2><i class="fas fa-user-circle"></i> Attendee Dashboard</h2>
+        <p class="text-muted">Welcome, <span th:text="${attendee.fullName}"></span>!</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card stat-blue">
+            <div class="stat-icon"><i class="fas fa-ticket-alt"></i></div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${myRegistrations.size()}">0</div>
+                <div class="stat-label">Registrations</div>
+            </div>
+        </div>
+        <div class="stat-card stat-green">
+            <div class="stat-icon"><i class="fas fa-certificate"></i></div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${myCertificates.size()}">0</div>
+                <div class="stat-label">Certificates</div>
+            </div>
+        </div>
+        <div class="stat-card stat-orange">
+            <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${unreadMessages}">0</div>
+                <div class="stat-label">Unread Messages</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <a th:href="@{/attendee/conferences}" class="action-card">
+            <i class="fas fa-university"></i><span>Browse Conferences</span>
+        </a>
+        <a th:href="@{/attendee/schedule}" class="action-card">
+            <i class="fas fa-calendar-alt"></i><span>View Schedule</span>
+        </a>
+        <a th:href="@{/attendee/feedback}" class="action-card">
+            <i class="fas fa-star"></i><span>Give Feedback</span>
+        </a>
+        <a th:href="@{/attendee/certificates}" class="action-card">
+            <i class="fas fa-certificate"></i><span>My Certificates</span>
+        </a>
+        <a th:href="@{/messages/inbox}" class="action-card">
+            <i class="fas fa-envelope"></i><span>Messages</span>
+        </a>
+        <a th:href="@{/attendee/profile}" class="action-card">
+            <i class="fas fa-user-edit"></i><span>My Profile</span>
+        </a>
+    </div>
+
+    <!-- My Registrations -->
+    <div class="section-title"><h3>My Conference Registrations</h3></div>
+    <div th:if="${#lists.isEmpty(myRegistrations)}" class="empty-state">
+        <i class="fas fa-calendar-plus fa-3x text-muted"></i>
+        <p>You haven't registered for any conferences yet.</p>
+        <a th:href="@{/attendee/conferences}" class="btn btn-primary">Browse Conferences</a>
+    </div>
+    <div th:each="reg : ${myRegistrations}" class="card reg-card">
+        <div class="reg-card-header">
+            <div>
+                <h4 th:text="${reg.conference?.name}"></h4>
+                <p class="text-muted">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span th:text="${reg.conference?.venue}"></span>
+                </p>
+            </div>
+            <div class="reg-card-meta">
+                <span th:class="'badge badge-reg-' + ${reg.status.name().toLowerCase()}"
+                      th:text="${reg.status}"></span>
+                <span class="badge badge-grey" th:text="${reg.type}"></span>
+            </div>
+        </div>
+        <div class="reg-card-footer">
+            <span class="text-muted small">
+                <i class="fas fa-calendar"></i>
+                <span th:text="${reg.conference?.startDate} + ' – ' + ${reg.conference?.endDate}"></span>
+            </span>
+            <form th:action="@{/attendee/registrations/{id}/cancel(id=${reg.id})}"
+                  method="post" style="display:inline"
+                  th:if="${reg.status.name() == 'CONFIRMED'}"
+                  onsubmit="return confirm('Cancel this registration?')">
+                <button type="submit" class="btn btn-sm btn-danger">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

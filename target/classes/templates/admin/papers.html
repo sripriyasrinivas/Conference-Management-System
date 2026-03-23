@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Papers | CMS Admin</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+    <div class="page-header">
+        <h2><i class="fas fa-file-alt"></i> Paper Submissions</h2>
+        <a th:href="@{/admin/dashboard}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="tab-bar">
+        <a href="?status=" class="tab active">All</a>
+        <a href="?status=SUBMITTED" class="tab">Submitted</a>
+        <a href="?status=UNDER_REVIEW" class="tab">Under Review</a>
+        <a href="?status=ACCEPTED" class="tab">Accepted</a>
+        <a href="?status=REJECTED" class="tab">Rejected</a>
+        <a href="?status=REVISION_REQUIRED" class="tab">Revision Required</a>
+    </div>
+
+    <div class="card">
+        <table class="data-table">
+            <thead>
+                <tr><th>#</th><th>Title</th><th>Author</th><th>Institution</th>
+                    <th>Version</th><th>Status</th><th>Submitted</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="paper : ${papers}">
+                    <td th:text="${paper.id}"></td>
+                    <td>
+                        <a th:href="@{/admin/papers/{id}(id=${paper.id})}" th:text="${paper.title}" class="link"></a>
+                    </td>
+                    <td th:text="${paper.author?.fullName}"></td>
+                    <td th:text="${paper.author?.institution}"></td>
+                    <td>v<span th:text="${paper.version}"></span></td>
+                    <td>
+                        <span th:class="'badge badge-status-' + ${paper.status.name().toLowerCase()}"
+                              th:text="${paper.status.displayName}"></span>
+                    </td>
+                    <td th:text="${#temporals.format(paper.submittedAt,'dd MMM yyyy')}"></td>
+                    <td>
+                        <a th:href="@{/admin/papers/{id}(id=${paper.id})}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(papers)}">
+                    <td colspan="8" class="text-center text-muted">No papers found.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

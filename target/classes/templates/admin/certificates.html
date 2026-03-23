@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Certificates | CMS Admin</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+    <div class="page-header">
+        <h2><i class="fas fa-certificate"></i> Certificate Management</h2>
+        <a th:href="@{/admin/dashboard}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+
+    <div class="grid-2">
+        <!-- Bulk Issue -->
+        <div class="card">
+            <div class="card-header"><h3><i class="fas fa-layer-group"></i> Bulk Issue Participation Certificates</h3></div>
+            <div class="card-body">
+                <p class="text-muted">Issue participation certificates to all confirmed attendees of a conference.</p>
+                <form th:action="@{/admin/certificates/bulk-issue}" method="post">
+                    <div class="form-group">
+                        <label>Select Conference</label>
+                        <select name="conferenceId" class="form-control" required>
+                            <option value="">Choose conference...</option>
+                            <option th:each="c : ${conferences}" th:value="${c.id}"
+                                    th:text="${c.name}"></option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-full">
+                        <i class="fas fa-certificate"></i> Issue Bulk Certificates
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Individual Issue -->
+        <div class="card">
+            <div class="card-header"><h3><i class="fas fa-user-check"></i> Issue Individual Certificate</h3></div>
+            <div class="card-body">
+                <form th:action="@{/admin/certificates/issue}" method="post">
+                    <div class="form-group">
+                        <label>Conference</label>
+                        <select name="conferenceId" class="form-control" required>
+                            <option value="">Choose conference...</option>
+                            <option th:each="c : ${conferences}" th:value="${c.id}"
+                                    th:text="${c.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Certificate Type</label>
+                        <select name="type" class="form-control" required>
+                            <option th:each="t : ${T(com.cms.model.Certificate.CertificateType).values()}"
+                                    th:value="${t}" th:text="${t.title}"></option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-plus"></i> Issue Certificate
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issued Certificates List -->
+    <div class="card" style="margin-top:1.5rem">
+        <div class="card-header">
+            <h3><i class="fas fa-list"></i> Issued Certificates (<span th:text="${certificates.size()}"></span>)</h3>
+        </div>
+        <div class="card-body">
+            <table class="data-table">
+                <thead>
+                    <tr><th>#</th><th>Recipient</th><th>Conference</th><th>Type</th>
+                        <th>Certificate No.</th><th>Issued At</th></tr>
+                </thead>
+                <tbody>
+                    <tr th:each="cert : ${certificates}">
+                        <td th:text="${cert.id}"></td>
+                        <td th:text="${cert.recipient?.fullName}"></td>
+                        <td th:text="${cert.conference?.name}"></td>
+                        <td>
+                            <span class="badge badge-cert" th:text="${cert.type.title}"></span>
+                        </td>
+                        <td><code th:text="${cert.certificateNumber}"></code></td>
+                        <td th:text="${#temporals.format(cert.issuedAt,'dd MMM yyyy HH:mm')}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(certificates)}">
+                        <td colspan="6" class="text-center text-muted">No certificates issued yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

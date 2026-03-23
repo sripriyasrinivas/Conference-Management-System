@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!-- ─── NAVBAR FRAGMENT ─────────────────────────────────────── -->
+<nav th:fragment="navbar" class="navbar">
+  <div class="navbar-brand">
+    <i class="fas fa-graduation-cap"></i>
+    <span>ConferenceMS</span>
+  </div>
+  <div class="navbar-links">
+    <a th:href="@{/schedule}"><i class="fas fa-calendar"></i> Schedule</a>
+
+    <sec:authorize access="hasRole('ADMIN')">
+      <a th:href="@{/admin/dashboard}">Dashboard</a>
+      <a th:href="@{/admin/papers}">Papers</a>
+      <a th:href="@{/admin/sessions}">Sessions</a>
+      <a th:href="@{/admin/conferences}">Conferences</a>
+      <a th:href="@{/admin/users}">Users</a>
+      <a th:href="@{/admin/certificates}">Certificates</a>
+      <a th:href="@{/admin/abstracts}">Abstracts</a>
+      <a th:href="@{/admin/reports}">Reports</a>
+    </sec:authorize>
+
+    <sec:authorize access="hasRole('AUTHOR')">
+      <a th:href="@{/author/dashboard}">Dashboard</a>
+      <a th:href="@{/author/papers/submit}">Submit Paper</a>
+      <a th:href="@{/author/papers}">My Papers</a>
+      <a th:href="@{/author/abstracts}">My Abstracts</a>
+    </sec:authorize>
+
+    <sec:authorize access="hasRole('REVIEWER')">
+      <a th:href="@{/reviewer/dashboard}">Dashboard</a>
+      <a th:href="@{/reviewer/reviews}">My Reviews</a>
+    </sec:authorize>
+
+    <sec:authorize access="hasRole('SPEAKER')">
+      <a th:href="@{/speaker/dashboard}">Dashboard</a>
+      <a th:href="@{/speaker/sessions}">My Sessions</a>
+    </sec:authorize>
+
+    <sec:authorize access="hasRole('ATTENDEE')">
+      <a th:href="@{/attendee/dashboard}">Dashboard</a>
+      <a th:href="@{/attendee/conferences}">Conferences</a>
+      <a th:href="@{/attendee/schedule}">Schedule</a>
+      <a th:href="@{/attendee/feedback}">Feedback</a>
+      <a th:href="@{/attendee/certificates}">Certificates</a>
+    </sec:authorize>
+
+    <sec:authorize access="isAuthenticated()">
+      <a th:href="@{/messages/inbox}"><i class="fas fa-envelope"></i> Messages</a>
+      <a th:href="@{/logout}" class="btn-logout">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout (<sec:authentication property="name"/>)
+      </a>
+    </sec:authorize>
+  </div>
+</nav>
+
+<!-- ─── ALERTS FRAGMENT ──────────────────────────────────────── -->
+<div th:fragment="alerts" class="container" style="padding-top:1rem">
+  <div th:if="${success}" class="alert alert-success">
+    <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+  </div>
+  <div th:if="${error}" class="alert alert-error">
+    <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+  </div>
+  <div th:if="${warning}" class="alert alert-warning">
+    <i class="fas fa-exclamation-triangle"></i> <span th:text="${warning}"></span>
+  </div>
+  <div th:if="${message}" class="alert alert-info">
+    <i class="fas fa-info-circle"></i> <span th:text="${message}"></span>
+  </div>
+</div>
+
+</html>

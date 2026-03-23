@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>My Papers | CMS</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+  <div class="page-header">
+    <h2><i class="fas fa-file-alt"></i> My Submitted Papers</h2>
+    <a th:href="@{/author/papers/submit}" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Submit New Paper
+    </a>
+  </div>
+  <div th:if="${#lists.isEmpty(papers)}" class="empty-state">
+    <i class="fas fa-file-alt fa-3x text-muted"></i>
+    <p>You haven't submitted any papers yet.</p>
+    <a th:href="@{/author/papers/submit}" class="btn btn-primary">Submit Your First Paper</a>
+  </div>
+  <div class="card" th:if="${!#lists.isEmpty(papers)}">
+    <table class="data-table">
+      <thead>
+        <tr><th>Title</th><th>Status</th><th>Version</th><th>Reviews</th><th>Submitted</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="paper : ${papers}">
+          <td>
+            <a th:href="@{/author/papers/{id}(id=${paper.id})}" th:text="${paper.title}" class="link"></a>
+          </td>
+          <td>
+            <span th:class="'badge badge-status-' + ${paper.status.name().toLowerCase()}"
+                  th:text="${paper.status.displayName}"></span>
+          </td>
+          <td>v<span th:text="${paper.version}"></span></td>
+          <td th:text="${paper.reviews.size()}"></td>
+          <td th:text="${#temporals.format(paper.submittedAt,'dd MMM yyyy')}"></td>
+          <td>
+            <a th:href="@{/author/papers/{id}(id=${paper.id})}" class="btn btn-sm btn-primary">
+              <i class="fas fa-eye"></i>
+            </a>
+            <a th:if="${paper.status.name() == 'REVISION_REQUIRED'}"
+               th:href="@{/author/papers/{id}/revise(id=${paper.id})}"
+               class="btn btn-sm btn-warning">
+              <i class="fas fa-edit"></i>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

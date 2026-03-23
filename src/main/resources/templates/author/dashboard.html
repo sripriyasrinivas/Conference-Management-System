@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Author Dashboard | CMS</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+    <div class="page-header">
+        <h2><i class="fas fa-pen-nib"></i> Author Dashboard</h2>
+        <p class="text-muted">Welcome, <span th:text="${author.fullName}"></span></p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card stat-blue">
+            <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${papers.size()}">0</div>
+                <div class="stat-label">Total Papers</div>
+            </div>
+        </div>
+        <div class="stat-card stat-green">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-info">
+                <div class="stat-value"
+                     th:text="${papers.stream().filter(p -> p.status.name() == 'ACCEPTED').count()}">0</div>
+                <div class="stat-label">Accepted</div>
+            </div>
+        </div>
+        <div class="stat-card stat-orange">
+            <div class="stat-icon"><i class="fas fa-sync"></i></div>
+            <div class="stat-info">
+                <div class="stat-value"
+                     th:text="${papers.stream().filter(p -> p.status.name() == 'UNDER_REVIEW').count()}">0</div>
+                <div class="stat-label">Under Review</div>
+            </div>
+        </div>
+        <div class="stat-card stat-yellow">
+            <div class="stat-icon"><i class="fas fa-edit"></i></div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${abstracts.size()}">0</div>
+                <div class="stat-label">Abstracts</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <a th:href="@{/author/papers/submit}" class="action-card">
+            <i class="fas fa-upload"></i><span>Submit Paper</span>
+        </a>
+        <a th:href="@{/author/abstracts/submit}" class="action-card">
+            <i class="fas fa-file-medical"></i><span>Submit Abstract</span>
+        </a>
+        <a th:href="@{/author/papers}" class="action-card">
+            <i class="fas fa-list"></i><span>My Papers</span>
+        </a>
+        <a th:href="@{/author/abstracts}" class="action-card">
+            <i class="fas fa-scroll"></i><span>My Abstracts</span>
+        </a>
+        <a th:href="@{/schedule}" class="action-card">
+            <i class="fas fa-calendar"></i><span>Schedule</span>
+        </a>
+        <a th:href="@{/messages/inbox}" class="action-card">
+            <i class="fas fa-envelope"></i><span>Messages</span>
+        </a>
+    </div>
+
+    <!-- Papers Table -->
+    <div class="section-title"><h3>My Submissions</h3></div>
+    <div class="card">
+        <table class="data-table">
+            <thead>
+                <tr><th>Title</th><th>Status</th><th>Version</th><th>Submitted</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="paper : ${papers}">
+                    <td th:text="${paper.title}"></td>
+                    <td>
+                        <span th:class="'badge badge-status-' + ${paper.status.name().toLowerCase()}"
+                              th:text="${paper.status.displayName}"></span>
+                    </td>
+                    <td>v<span th:text="${paper.version}"></span></td>
+                    <td th:text="${#temporals.format(paper.submittedAt,'dd MMM yyyy')}"></td>
+                    <td>
+                        <a th:href="@{/author/papers/{id}(id=${paper.id})}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                        <a th:if="${paper.status.name() == 'REVISION_REQUIRED'}"
+                           th:href="@{/author/papers/{id}/revise(id=${paper.id})}"
+                           class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Revise
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(papers)}">
+                    <td colspan="5" class="text-center text-muted">
+                        No papers submitted yet.
+                        <a th:href="@{/author/papers/submit}">Submit your first paper</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

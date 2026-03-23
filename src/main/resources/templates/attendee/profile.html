@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Profile | CMS</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+  <div class="page-header"><h2><i class="fas fa-user-edit"></i> My Profile</h2></div>
+  <div class="card card-narrow">
+    <div class="card-body">
+      <form th:action="@{/attendee/profile}" method="post">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="fullName" class="form-control" th:value="${user.fullName}"/>
+          </div>
+          <div class="form-group">
+            <label>Institution</label>
+            <input type="text" name="institution" class="form-control" th:value="${user.institution}"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea name="bio" class="form-control" rows="3" th:text="${user.bio}"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" name="phone" class="form-control" th:value="${user.phone}"/>
+        </div>
+        <div class="form-group">
+          <label>Email (read-only)</label>
+          <input type="text" class="form-control" th:value="${user.email}" disabled/>
+        </div>
+        <div class="form-group">
+          <label>Username (read-only)</label>
+          <input type="text" class="form-control" th:value="${user.username}" disabled/>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Save Changes
+        </button>
+      </form>
+    </div>
+  </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

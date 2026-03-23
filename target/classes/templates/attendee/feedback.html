@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Session Feedback | CMS</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+    <div class="page-header">
+        <h2><i class="fas fa-star"></i> Session Feedback</h2>
+        <p class="text-muted">Help us improve by sharing your experience</p>
+    </div>
+
+    <div th:if="${#lists.isEmpty(sessions)}" class="empty-state">
+        <i class="fas fa-calendar-times fa-3x text-muted"></i>
+        <p>No sessions available for feedback.</p>
+    </div>
+
+    <div th:each="session : ${sessions}" class="card feedback-card">
+        <div class="feedback-card-header">
+            <div>
+                <h4 th:text="${session.title}"></h4>
+                <div>
+                    <span th:class="'badge badge-session-' + ${session.type.name().toLowerCase()}"
+                          th:text="${session.type.displayName}"></span>
+                    <span th:if="${session.speaker}" class="text-muted">
+                        <i class="fas fa-microphone"></i>
+                        <span th:text="${session.speaker.fullName}"></span>
+                    </span>
+                </div>
+            </div>
+            <span th:text="${session.sessionDate}"></span>
+        </div>
+
+        <form th:action="@{/attendee/feedback/{id}(id=${session.id})}" method="post"
+              class="feedback-form">
+            <div class="rating-group">
+                <div class="rating-item">
+                    <label>Content Quality</label>
+                    <div class="star-rating">
+                        <input type="range" name="contentRating" min="1" max="5" value="3"
+                               class="range-input" oninput="updateStars(this)"/>
+                        <span class="star-display">⭐⭐⭐</span>
+                    </div>
+                </div>
+                <div class="rating-item">
+                    <label>Speaker Quality</label>
+                    <div class="star-rating">
+                        <input type="range" name="speakerRating" min="1" max="5" value="3"
+                               class="range-input" oninput="updateStars(this)"/>
+                        <span class="star-display">⭐⭐⭐</span>
+                    </div>
+                </div>
+                <div class="rating-item">
+                    <label>Overall</label>
+                    <div class="star-rating">
+                        <input type="range" name="overallRating" min="1" max="5" value="3"
+                               class="range-input" oninput="updateStars(this)"/>
+                        <span class="star-display">⭐⭐⭐</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Comments</label>
+                <textarea name="comments" class="form-control" rows="2"
+                          placeholder="Share your thoughts about this session..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Submit Feedback
+            </button>
+        </form>
+    </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

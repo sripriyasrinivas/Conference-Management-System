@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Submit Abstract | CMS</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+    <div class="page-header">
+        <h2><i class="fas fa-file-medical"></i> Submit Abstract</h2>
+        <a th:href="@{/author/dashboard}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+    <div class="card card-narrow">
+        <div class="card-body">
+            <form th:action="@{/author/abstracts/submit}" method="post">
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" name="title" class="form-control" required/>
+                </div>
+                <div class="form-group">
+                    <label>Abstract Content *</label>
+                    <textarea name="content" class="form-control" rows="8"
+                              placeholder="Write your abstract here (200-500 words recommended)..."
+                              required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Keywords</label>
+                    <input type="text" name="keywords" class="form-control"
+                           placeholder="keyword1, keyword2, keyword3"/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Submit Abstract
+                    </button>
+                    <a th:href="@{/author/dashboard}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

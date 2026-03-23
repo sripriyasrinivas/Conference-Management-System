@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Schedule | CMS</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+    <div class="page-header">
+        <h2><i class="fas fa-calendar-alt"></i> Conference Schedule</h2>
+    </div>
+
+    <!-- Track Legend -->
+    <div th:if="${!#lists.isEmpty(tracks)}" class="track-legend">
+        <span class="track-legend-title">Tracks:</span>
+        <span th:each="track : ${tracks}" class="badge badge-track" th:text="${track}"></span>
+    </div>
+
+    <div th:if="${#maps.isEmpty(schedule)}" class="empty-state">
+        <i class="fas fa-calendar-times fa-3x text-muted"></i>
+        <p>No sessions scheduled yet.</p>
+    </div>
+
+    <!-- Day-by-day schedule -->
+    <div th:each="entry : ${schedule}" class="schedule-day">
+        <div class="schedule-day-header">
+            <h3>
+                <i class="fas fa-calendar-day"></i>
+                <span th:text="${#temporals.format(entry.key,'EEEE, dd MMMM yyyy')}"></span>
+            </h3>
+        </div>
+
+        <div class="schedule-timeline">
+            <div th:each="session : ${entry.value}" class="schedule-slot"
+                 th:classappend="${'slot-type-' + session.type.name().toLowerCase()}">
+                <div class="slot-time">
+                    <span th:text="${session.startTime}"></span>
+                    <span class="time-sep">–</span>
+                    <span th:text="${session.endTime}"></span>
+                </div>
+                <div class="slot-content">
+                    <div class="slot-header">
+                        <h4 th:text="${session.title}"></h4>
+                        <div class="slot-badges">
+                            <span th:class="'badge badge-session-' + ${session.type.name().toLowerCase()}"
+                                  th:text="${session.type.displayName}"></span>
+                            <span th:if="${session.track}" class="badge badge-track"
+                                  th:text="${session.track}"></span>
+                        </div>
+                    </div>
+                    <p th:if="${session.description}" class="slot-description"
+                       th:text="${#strings.abbreviate(session.description, 150)}"></p>
+                    <div class="slot-meta">
+                        <span th:if="${session.speaker}">
+                            <i class="fas fa-microphone"></i>
+                            <span th:text="${session.speaker.fullName}"></span>
+                            <span class="text-muted" th:text="' (' + ${session.speaker.institution} + ')'"></span>
+                        </span>
+                        <span th:if="${session.room}">
+                            <i class="fas fa-door-open"></i>
+                            <span th:text="${session.room}"></span>
+                        </span>
+                        <span th:if="${session.maxCapacity > 0}">
+                            <i class="fas fa-users"></i>
+                            <span th:text="'Capacity: ' + ${session.maxCapacity}"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

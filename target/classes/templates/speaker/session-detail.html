@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Session Detail | CMS</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<th:block th:replace="~{common/fragments :: navbar}"></th:block>
+<div th:replace="~{common/fragments :: alerts}"></div>
+<main class="container main-content">
+  <div class="page-header">
+    <h2><i class="fas fa-presentation"></i> Session Details</h2>
+    <a th:href="@{/speaker/sessions}" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+  </div>
+
+  <div class="grid-2">
+    <!-- Session Info -->
+    <div class="card">
+      <div class="card-header"><h3><i class="fas fa-info-circle"></i> Session Information</h3></div>
+      <div class="card-body">
+        <div class="detail-row"><label>Title:</label><span th:text="${session.title}"></span></div>
+        <div class="detail-row"><label>Type:</label>
+          <span th:class="'badge badge-session-' + ${session.type.name().toLowerCase()}"
+                th:text="${session.type.displayName}"></span>
+        </div>
+        <div class="detail-row"><label>Track:</label><span th:text="${session.track ?: '—'}"></span></div>
+        <div class="detail-row"><label>Room:</label><span th:text="${session.room ?: '—'}"></span></div>
+        <div class="detail-row"><label>Date:</label><span th:text="${session.sessionDate}"></span></div>
+        <div class="detail-row"><label>Time:</label>
+          <span th:text="${session.startTime} + ' – ' + ${session.endTime}"></span>
+        </div>
+        <div class="detail-row"><label>Capacity:</label><span th:text="${session.maxCapacity}"></span></div>
+        <div th:if="${session.description}" class="detail-row full">
+          <label>Description:</label>
+          <p class="abstract-text" th:text="${session.description}"></p>
+        </div>
+        <div th:if="${session.paper}" class="detail-row full">
+          <label>Linked Paper:</label>
+          <p th:text="${session.paper.title}"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback Stats -->
+    <div class="card">
+      <div class="card-header">
+        <h3><i class="fas fa-star"></i> Feedback Summary
+          (<span th:text="${feedbackStats['count']}"></span> responses)
+        </h3>
+      </div>
+      <div class="card-body">
+        <div th:if="${feedbackStats['count'] == 0}" class="text-center text-muted">
+          <i class="fas fa-comment-slash fa-2x"></i>
+          <p>No feedback received yet.</p>
+        </div>
+        <div th:if="${feedbackStats['count'] > 0}">
+          <div class="stats-grid stats-grid-4" style="margin-bottom:1rem">
+            <div class="stat-card stat-blue mini">
+              <div class="stat-value"
+                   th:text="${#numbers.formatDecimal(feedbackStats['avgContent'],1,1)}"></div>
+              <div class="stat-label">Content / 5</div>
+            </div>
+            <div class="stat-card stat-green mini">
+              <div class="stat-value"
+                   th:text="${#numbers.formatDecimal(feedbackStats['avgSpeaker'],1,1)}"></div>
+              <div class="stat-label">Speaker / 5</div>
+            </div>
+            <div class="stat-card stat-orange mini">
+              <div class="stat-value"
+                   th:text="${#numbers.formatDecimal(feedbackStats['avgOverall'],1,1)}"></div>
+              <div class="stat-label">Overall / 5</div>
+            </div>
+          </div>
+
+          <!-- Individual feedback comments -->
+          <h4 style="margin-bottom:0.75rem;font-size:0.9rem">Attendee Comments</h4>
+          <div th:each="fb : ${feedbacks}" th:if="${fb.comments != null and !#strings.isEmpty(fb.comments)}"
+               class="review-card">
+            <p th:text="${fb.comments}"></p>
+            <small class="text-muted"
+                   th:text="'Overall: ' + ${fb.overallRating} + '/5 · ' +
+                             #temporals.format(fb.submittedAt,'dd MMM yyyy')">
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="footer"><p>&copy; 2026 Conference Management System</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
